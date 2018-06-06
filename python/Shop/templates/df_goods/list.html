@@ -1,0 +1,46 @@
+{% extends 'df_goods/base_goods.html' %}
+{% load static %}
+{% block head %}
+    <script>
+
+    </script>
+{% endblock %}
+{% block list %}
+    <div class="main_wrap clearfix">
+    <div class="r_wrap fr clearfix">
+        <div class="sort_bar">
+            <a href="{% url 'fruits' %}?type_id={{ type_id }}" {% if sort_type == 'default' %}class="active"{% endif %}>默认</a>
+            <a href="{% url 'fruits' %}?type_id={{ type_id }}&type={{ 'price' }}" {% if sort_type == 'price' %}class="active"{% endif %}>价格</a>
+            <a href="{% url 'fruits' %}?type_id={{ type_id }}&type={{ 'hot' }}" {% if sort_type == 'hot' %}class="active" {% endif %}>人气</a>
+        </div>
+
+        <ul class="goods_type_list clearfix">
+            {% for info in contents.object_list %}
+                <li>
+                    <a href="{% url 'detail' %}?fruit_id={{ info.id }}"><img src="{% url 'media' info.g_pic %}"></a>
+                    <h4><a href="{% url 'detail' %}?fruit_id={{ info.id }}">{{ info.g_title }}</a></h4>
+                    <div class="operate">
+                        <span class="prize">￥{{ info.g_price }}</span>
+                        <span class="unit">{{ info.g_unit }}</span>
+                        <a href="#" class="add_goods" title="加入购物车" id="9"></a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="pagenation">
+            {% if contents.has_previous %}
+                <a href="{% url 'fruits' %}?type_id={{ type_id }}&page={{ contents.previous_page_number }}&type={{ sort_type }}">上一页</a>
+            {% else %}
+                <a href="#" class="disabled">上一页</a>
+            {% endif %}
+            {% for number in contents.paginator.page_range %}
+                <a href="{% url 'fruits' %}?type_id={{ type_id }}&page={{ number }}&type={{ sort_type }}" {% if number == contents.number %}class="active"{% endif %}>{{ number }}</a>
+            {% endfor %}
+            {% if contents.has_next %}
+                <a href="{% url 'fruits' %}?type_id={{ type_id }}&page={{ contents.next_page_number }}&type={{ sort_type }}">下一页</a>
+            {% else %}
+                <a href="#" class="disabled">下一页</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

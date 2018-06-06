@@ -1,0 +1,135 @@
+{% extends 'df_goods/base_goods.html' %}
+{% block head %}
+    <script>
+        function calc_total() {
+            //1.获取数量*单价 相乘计算结果
+            var count = parseInt($('.num_show').val())
+            var price = parseFloat($('.show_pirze>em').text())
+            var total_num = count * price
+            //2.展示结果
+            // toFixed() 保留两位小数
+            $('.total>em').text(total_num.toFixed(2))
+        }
+        // 预加载
+        $(function () {
+
+            $('.num_show').blur(function () {
+
+                // 1.获取数量
+                var count = parseInt($(this).val())
+                var stock = parseInt($('#stock').text())
+                if (count >= stock){
+                    $(this).val(stock)
+                }else if (count <1){
+                    $(this).val(1)
+                }
+                calc_total()
+            })
+
+            //  加入购物车
+            $('#add_cart').click(function () {
+                // 1.商品id  2.购买个数
+                var shop_id = $('.goods_detail_list').attr('id')
+                var count = $('.num_show').val()
+                url = '{% url 'add_cart' %}'
+                $.ajax({
+                    url:url,
+                    data:{
+                        count:count,
+                        shop_id:shop_id,
+                        csrfmiddlewaretoken:'{{ csrf_token }}',
+                        next_href:window.location.href
+                    },
+                    type:'POST',
+                    async:true,
+                    success:function (data) {
+                        if(data.status==0){
+                            window.location.href = data.url
+                        }else if(data.status == 1){
+                            $('#show_count').text(data.count)
+                        }else{
+                            alert(data.msg)
+                        }
+                    }
+                })
+            })
+        })
+        function add() {
+            // 1.获取原来的值
+            var count = parseInt($('.num_show').val())
+            var stock = parseInt($('#stock').text())
+            // 个数小于库存,+1
+            if (count < stock){
+                // 2.原来值+1
+                count += 1
+                // 3.赋值给输入框
+                $('.num_show').val(count)
+                // 计算总价,展示总价
+                calc_total()
+            }
+        }
+        function minus() {
+            var count = parseInt($('.num_show').val())
+            if (count > 1){
+                count -=1
+                $('.num_show').val(count)
+                calc_total()
+            }
+        }
+
+    </script>
+{% endblock %}
+{% block detail %}
+    <div class="goods_detail_con clearfix">
+        <div class="goods_detail_pic fl"><img src="{% url 'media' infos.g_pic %}"></div>
+
+        <div class="goods_detail_list fr" id="{{ infos.id }}">
+            <h3>【{{ infos.g_title }}】</h3>
+            <p>【{{ infos.g_desc }}】快来品尝吧！</p>
+            <div class="prize_bar">
+                <span class="show_pirze">¥<em>{{ infos.g_price }}</em></span>
+                <span class="show_unit">单  位：{{ infos.g_unit }}</span>
+                <span class="show_unit">库  存：<span id="stock">{{ infos.g_stock }}</span></span>
+            </div>
+            <div class="goods_num clearfix">
+                <div class="num_name fl">数 量：</div>
+                <div class="num_add fl">
+                    <input type="text" class="num_show fl" value="1">
+                    <a href="javascript:add();" class="add fr">+</a>
+                    <a href="javascript:minus();" class="minus fr">-</a>
+                </div>
+            </div>
+            <div class="total">总价：<em>{{ infos.g_price }}</em>元</div>
+            <div class="operate_btn">
+                <a href="javascript:;" class="buy_btn">立即购买</a>
+                <a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block list %}
+    <div class="r_wrap fr clearfix">
+        <ul class="detail_tab clearfix">
+            <li class="active">商品介绍</li>
+            <li id="888">评论</li>
+        </ul>
+
+        <div class="tab_content">
+            <dl>
+                <dt>商品详情：</dt>
+                {#        只加载文本#}
+                {% autoescape off %}
+                    <dd>{{ infos.content }}</dd>
+                {% endautoescape %}
+            </dl>
+        </div>
+
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}
+

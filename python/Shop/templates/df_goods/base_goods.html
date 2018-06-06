@@ -1,0 +1,53 @@
+{% extends 'base_head.html' %}
+{% block body %}
+    <div class="navbar_con">
+        <div class="navbar clearfix">
+            <div class="subnav_con fl">
+                <h1>全部商品分类</h1>
+                <span></span>
+                <ul class="subnav">
+                    {% for type in all_info %}
+                        <li><a href="{% url 'fruits' %}?type_id={{ type.id }}" class="{{ type.class_name }}">{{ type.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <ul class="navlist fl">
+                <li><a href="{% url 'index' %}">首页</a></li>
+                <li class="interval">|</li>
+                <li><a href="">手机生鲜</a></li>
+                <li class="interval">|</li>
+                <li><a href="">抽奖</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="breadcrumb">
+        <a href="#">全部分类</a>
+        <span>></span>
+        <a href="#">{{ typeinfo.title }}</a>
+        {% if is_detail == 1 %}
+            <span>></span>
+            <a href="#">商品详情</a>
+        {% endif %}
+    </div>
+    {# 详情页面预留的块 #}
+    {% block detail %}{% endblock %}
+    <div class="main_wrap clearfix">
+        <div class="l_wrap fl clearfix">
+            <div class="new_goods">
+                <h3>新品推荐</h3>
+                <ul>
+                    {% for good in push_infos %}
+                        <li>
+                            <a href="{% url 'detail'%}?fruit_id={{ good.id }}"><img src="{% url 'media' good.g_pic %}"></a>
+                            <h4><a href="{% url 'detail'%}?fruit_id={{ good.id }}">{{ good.g_title }}</a></h4>
+                            <div class="prize">￥{{ good.g_price }}</div>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+            </div>
+        </div>
+        {# 列表页的所有商品 #}
+        {% block list %}{% endblock %}
+    </div>
+{% endblock %}

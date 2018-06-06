@@ -1,0 +1,64 @@
+{% extends 'df_user/base_user.html' %}
+{% load static %}
+{% block right_content %}
+    <div class="right_content clearfix">
+        <h3 class="common_title2">全部订单</h3>
+        {% for info in infos.object_list %}
+        <ul class="order_list_th w978 clearfix">
+            <li class="col01"></li>
+            <li class="col02">订单号: {{ info.o_id }}</li>
+            <li class="col02 stress">
+                {% if info.o_pay %}
+                {{ '已支付' }}
+                {% else %}
+                {{ '未支付' }}
+                {% endif %}
+            </li>
+        </ul>
+        <table class="order_list_table w980">
+            <tbody>
+
+            <tr>
+                <td width="55%">
+
+                    <ul class="order_goods_list clearfix">
+                        <li class="col01"><img src="{% url 'media' info.detailinfo_set.all.0.goods.g_pic %}"></li>
+                        <li class="col02"><em>{{ info.detailinfo_set.all.0.goods.g_price }}元/{{ info.detailinfo_set.all.0.goods.g_unit }}</em></li>
+                        <li class="col03"></li>
+                        <li class="col04">{{ info.detailinfo_set.all.0.count }}{{ info.detailinfo_set.all.0.goods.g_unit }}</li>
+                    </ul>
+
+                </td>
+                <td width="15%">{{ info.o_total_price}}元</td>
+                {% if info.o_pay %}
+                <td width="15%">已付款</td>
+                {% else %}
+                <td width="15%">未付款</td>
+                {% endif %}
+                    <td width="15%"><a href="#" class="oper_btn">查看物流</a></td>
+
+                    <td width="15%">待付款</td>
+                    <td width="15%"><a href="#" class="oper_btn">去付款</a></td>
+
+            </tr>
+
+            </tbody>
+        </table>
+        {% endfor %}
+        <div class="pagenation">
+                {% if infos.has_previous %}
+                <a href="{% url 'order_goods' %}?page={{ infos.previous_page_number }}">上一页</a>
+                {% else %}
+                <a href="#" class="disabled">上一页</a>
+                {% endif %}
+                {% for num in infos.paginator.page_range %}
+                    <a href="{% url 'order_goods' %}?page={{ num }}"{% if num == infos.number  %} class="active" {% endif %}>{{ num }}</a>
+                {% endfor %}
+                {% if infos.has_next %}
+                <a href="{% url 'order_goods' %}?page={{ infos.next_page_number }}">下一页></a>
+                {% else %}
+                <a href="#" class="disabled">下一页></a>
+                {% endif %}
+        </div>
+    </div>
+{% endblock %}
